@@ -1,0 +1,254 @@
+{
+	"info": {
+		"_postman_id": "b6262549-bb8f-43f4-b48b-c30c80077cb8",
+		"name": "GoRestAPIs",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29766344"
+	},
+	"item": [
+		{
+			"name": "GetUsers",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response count > 0 \", function () {\r",
+							"   var count=pm.response.json().length\r",
+							"   pm.expect(count).to.be.below(50);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"// Tests to be added\r",
+							"// Verify response code to 200\r",
+							"// Verify number of Users are above 0\r",
+							"\r",
+							"// Note - Use below snippet for get the number of user\r",
+							"// var count=pm.response.json().length\r",
+							"// pm.expect(count).to.eql(some number);\r",
+							"// pm.expect(count).to.be.below(some number);\r",
+							"// pm.expect(count).to.be.above(some number);\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseURL_GoRest}}public/v2/users?",
+					"host": [
+						"{{BaseURL_GoRest}}public"
+					],
+					"path": [
+						"v2",
+						"users"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": null
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateUser",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"User Id is not null\", function () {\r",
+							"    pm.expect(pm.response.json().id).to.not.be.null;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"User Id is a Number\", function () {\r",
+							"    pm.expect(pm.response.json().id).to.be.a('number');\r",
+							"});\r",
+							"\r",
+							"// Set the user_id environment variable\r",
+							"var user_id = pm.response.json().id\r",
+							"pm.environment.set(\"user_id\", user_id);\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Generate a unique identifier using timestamp and a random number\r",
+							"var uniqueId = new Date().getTime() + Math.floor(Math.random() * 1000);\r",
+							"\r",
+							"// Create the unique email\r",
+							"var uniqueEmail = \"susmitha\" + uniqueId + \"@gmail.com\";\r",
+							"\r",
+							"// Set the unique email in an environment variable\r",
+							"pm.environment.set(\"uniqueEmail\", uniqueEmail);\r",
+							"\r",
+							"console.log(uniqueEmail)\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{AuthToken}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"name\":\"PradeepRS\", \"gender\":\"male\", \"email\": \"{{uniqueEmail}}\", \"status\":\"active\"}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL_GoRest}}public/v2/users",
+					"host": [
+						"{{BaseURL_GoRest}}public"
+					],
+					"path": [
+						"v2",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update_User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Name is given name\", function () {\r",
+							"    pm.expect(pm.response.json().name).to.include(\"susmitha\")\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{AuthToken}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"name\":\"susmitha\", \"gender\":\"male\", \"email\": \"{{uniqueEmail}}\", \"status\":\"active\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL_GoRest}}public/v2/users/{{user_id}}",
+					"host": [
+						"{{BaseURL_GoRest}}public"
+					],
+					"path": [
+						"v2",
+						"users",
+						"{{user_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteUser",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code name has string\", function () {\r",
+							"    pm.response.to.have.status(\"No Content\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{AuthToken}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL_GoRest}}public/v2/users/{{user_id}}",
+					"host": [
+						"{{BaseURL_GoRest}}public"
+					],
+					"path": [
+						"v2",
+						"users",
+						"{{user_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
